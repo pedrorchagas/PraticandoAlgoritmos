@@ -21,10 +21,13 @@ typedef struct No{
     int ocorrencias;
 } No;
 
-/**
- * Função para remover espaços e converter para minúsculas.
- * Padroniza os tokens para garantir contagem correta.
- */
+/*
+
+    normalizar
+    Função para remover espaços e converter para minúsculas.
+    Padroniza os tokens para garantir contagem correta.
+    
+*/
 void normalizar(char *str) {
     char *dest = str;
     char *src = str;
@@ -49,45 +52,12 @@ void normalizar(char *str) {
     }
 }
 
-/**
- * Função de comparação para o qsort (ordem alfabética).
- */
 /*
-int comparar_alfabetico(const PalavraChave *a, const PalavraChave *b) {
-    PalavraChave p1 = a;
-    PalavraChave p2 = b;
-    return strcmp(p1->Termo, p2->Termo);
-}
-*/
 
-/*
-int busca_binaria_iterativa(PalavraChave listaDistintas, char alvo, int totalPalavras){
-	int esquerda = 0;
-	int direita = totalPalavras - 1;
-	int meio = 0;
-	int verificacao = 0;
-	int indice = -1;
-	
-	printf("A: %s, T: %d\n", alvo, totalPalavras);
-	
-	do {
-		meio = (esquerda + direita)/2;
-		verificacao = strcmp(listaDistintas[meio].Termo, alvo);
-		if (verificacao > 0) {
-			// esta a direita
-			esquerda = meio;
-		} else if (verificacao < 0) {
-			// esta a esquerda
-			direita = meio;
-		} else {
-			indice = meio;
-		}
-	} while(verificacao != 0 && direita-1 != esquerda && meio != 0); 
-	
-	return indice;
-}
-*/
+    criarNo
+    Função auxiliar que realiza a criação de um Nó
 
+*/
 No* criarNo(string valor) {
     No* novoNo = (No*) malloc(sizeof(No));
     strcpy(novoNo->valor, valor) ;
@@ -97,6 +67,12 @@ No* criarNo(string valor) {
     return novoNo;
 }
 
+/*
+
+    adicionarNo
+    Função auxiliar que adiciona um novo No na arvore principal.
+
+*/
 No* adicionarNo(No *arvore, string valor, int *totalDistintas) {
     if (arvore == NULL) {
         arvore = criarNo(valor);
@@ -117,33 +93,63 @@ No* adicionarNo(No *arvore, string valor, int *totalDistintas) {
     }
     return arvore;
 }
+/*
 
+    imprimirCrescente
+    Função para imprimir a arvore na ordenação crescente
+    
+*/
 void imprimirCrescente(No *arvore) {
-
     if (arvore == NULL)
         return;
     
     // acessar esquerda
     imprimirCrescente(arvore->direita);
-    if (arvore->ocorrencias > 1)
-        printf("%-40s | %d\n", arvore->valor, arvore->ocorrencias);
+    printf("%-40s | %d\n", arvore->valor, arvore->ocorrencias);
+    
     // acessar direita
     imprimirCrescente(arvore->esquerda);
 }
 
-void imprimirDecrescente(No *arvore) {
+/*
 
+    imprimirDecrescente
+    Função para imprimir a arvore na ordenação decrescente
+
+*/
+void imprimirDecrescente(No *arvore) {
     if (arvore == NULL)
         return;
     
     // acessar esquerda
     imprimirDecrescente(arvore->esquerda);
-    if (arvore->ocorrencias > 1)
-        printf("%-40s | %d\n", arvore->valor, arvore->ocorrencias);
+    printf("%-40s | %d\n", arvore->valor, arvore->ocorrencias);
+    
     // acessar direita
     imprimirDecrescente(arvore->direita);
 }
+/*
 
+    liberarArvore 
+    Função para liberar a arvore e seus nó da memória
+
+*/
+void liberarArvore(No *arvore) {
+    if (arvore == NULL){
+        return;
+    }
+    liberarArvore(arvore->direita);
+    liberarArvore(arvore->esquerda);
+    free(arvore);
+}
+
+/*
+
+    Função principal do programa
+    Abre o arquivo savedrecs_total e pega as palavras chaves
+    e adiciona dentro de uma arvore binaria
+    
+*/
 int main() {
     PalavraChave Lista[MAX_DISTINCT_PALAVRAS];
     int TotalDistintas = 0;
@@ -182,15 +188,17 @@ int main() {
 
     // Exibição do resultado final
 
-    // imprimir na ordem crescer
-
-    // imprimir na ordem decrescente
-
     printf("Total distintas: %d\n", TotalDistintas);
 
+    // imprimir na ordem crescer
     printf("\n\nImprimindo na crescente\n\n");
     imprimirCrescente(arvore);
+    
+    // imprimir na ordem decrescente
     printf("\n\nImpriindo na decrescente\n\n");
     imprimirDecrescente(arvore);
+    
+    // liberarArvore da memória
+    liberarArvore(arvore);
     return 0;
 }
