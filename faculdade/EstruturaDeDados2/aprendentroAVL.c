@@ -36,6 +36,10 @@ int balancingFactor(No* tree) {
     return tree ? height(tree->left) - height(tree->right) : 0;
 }
 
+No* rotacaoEsquerda(No* tree) {
+
+}
+
 // criar função de inserção na arvore
 No* addNewNo(No* tree, int value) {
     // cria o nó quando a arvore chega na base.
